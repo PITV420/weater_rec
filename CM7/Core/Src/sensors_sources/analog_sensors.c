@@ -27,7 +27,9 @@ void battery_level(ADC_HandleTypeDef* adc, char* level, double ref_value){
 	uint16_t bat_adc = 0;
 	bat_adc = HAL_ADC_GetValue(adc);
 	vbat = bat_adc*ref_value/65535;
-
+	if (vbat>2.30){
+		approx_level = 110;
+	}
 	if(vbat>3.7){
 		approx_level = 100;
 	}
@@ -49,8 +51,10 @@ void battery_level(ADC_HandleTypeDef* adc, char* level, double ref_value){
 	if(vbat<=3.4 && vbat>3.3){
 		approx_level = 5;
 	}
-
-	if (approx_level>70){
+	if (approx_level>100){
+		sprintf(level, "Battery level charging");
+	}
+	else if(approx_level>70 && approx_level<100){
 		sprintf(level, "Battery level high, at: %u%s", approx_level, "%");
 	}
 	else if(approx_level<=70 && approx_level>30){
